@@ -55,6 +55,10 @@ export async function transcriptOrUndefined(
 export async function enrolWithProcedure(
   studentId: string, courseId: string, secId: string,
   semester: string, year: number): Promise<number> {
-  // TODO
-  throw new Error('not implemented');
+    const { rows } = await pool.query<{ new_total: string }>(
+      `CALL enrol_student($1, $2, $3, $4, $5)`,
+    [studentId, courseId, secId, semester, year]
+  );
+  // new_total is numeric, so pg delivers it as a string.
+  return Number(rows[0].new_total);
 }
