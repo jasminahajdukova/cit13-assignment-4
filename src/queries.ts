@@ -56,8 +56,16 @@ export async function findStudent(id: string): Promise<Student | undefined> {
 
 /** The students of one department, ordered by name. */
 export async function studentsIn(deptName: string): Promise<Student[]> {
-  // TODO
-  throw new Error('not implemented');
+    const { rows } = await pool.query<Student>(
+    `SELECT id,
+            name,
+            dept_name AS "deptName",
+            tot_cred AS "totCred"
+    FROM student
+    WHERE dept_name = $1
+    ORDER BY name;`, 
+  [deptName]);
+  return rows;
 }
 
 // --- A2. A join -----------------------------------------------------------
@@ -104,6 +112,8 @@ export async function insertStudent(student: Student): Promise<Student> {
 
 /** True when a row was deleted, false when there was nothing to delete. */
 export async function deleteStudent(id: string): Promise<boolean> {
-  // TODO
-  throw new Error('not implemented');
+  const { rowCount } = await pool.query(
+    `DELETE FROM student WHERE id = $1`,
+  [id]);
+  return (rowCount ?? 0) > 0;
 }
