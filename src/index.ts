@@ -69,10 +69,11 @@ console.log(await transcriptOf('00128'));
 //   7   (3 from before, plus the 4 credits of CS-101)
 
 // --- Part C ---
-// console.log(await firstCourseTitle('00128'));             // Intro. to Computer Science
-// console.log(await firstCourseTitle('99999'));             // undefined
-// console.time('one after another');
+console.log("\n--- --- --- FIRST COURSE TITLE --- --- --\n")
+console.log(await firstCourseTitle('00128'));             // Intro. to Computer Science
+console.log(await firstCourseTitle('99999'));             // undefined
 console.log("\n--- --- --- OVERVIEW SLOWLY --- --- --- -\n")
+// console.time('one after another');
 console.log(await overviewSlowly());
 // console.timeEnd('one after another');   // about 600 ms
 // console.time('together');
