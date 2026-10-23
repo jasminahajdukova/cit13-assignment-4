@@ -41,9 +41,18 @@ export async function firstCourseTitle(studentId: string): Promise<string | unde
  * because the pool has to open two more connections. Waiting is what makes
  * the difference visible, and on a real server the waiting is real.
  */
+async function count(table: 'student' | 'course' | 'department'): Promise<number> {
+  const result = await pool.query<{ total: number }>(
+    `SELECT pg_sleep(0.2), count(*)::int AS total FROM ${table}`
+  );
+  return result.rows[0].total;
+}
+
 export async function overviewSlowly(): Promise<Overview> {
-  // TODO
-  throw new Error('not implemented');
+  const students = await count('student');
+  const courses = await count('course');
+  const departments = await count('department');
+  return { students, courses, departments };
 }
 
 export async function overview(): Promise<Overview> {
