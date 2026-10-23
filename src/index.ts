@@ -20,19 +20,23 @@ await pool.query("DELETE FROM student WHERE id = '90000'");
 console.log('connected');
 
 // --- Part A ---
+console.log("\n--- --- --- LIST STUDENTS --- --- ---\n")
 console.log((await listStudents(5, 0)).map(s => s.id));   // 00128 12345 19991 23121 44553
 console.log((await listStudents(5, 5)).map(s => s.id));   // 45678 54321 55739 70557 76543
 // console.log(await findStudent('00128'));
 //   { id: '00128', name: 'Zhang', deptName: 'Comp. Sci.', totCred: 102 }
 // console.log(await findStudent('99999'));                  // undefined
+console.log("\n--- --- --- STUDENTS IN --- --- --- --\n")
 console.log((await studentsIn('Comp. Sci.')).map(s => s.name));
 //   [ 'Brown', 'Shankar', 'Williams', 'Zhang' ]
-// console.log(await coursesFor('00128'));
+console.log("\n--- --- --- COURSES FOR --- --- --- --\n")
+console.log(await coursesFor('00128'));
 //   [ { courseId: 'CS-101', title: 'Intro. to Computer Science', grade: '12' },
 //     { courseId: 'CS-347', title: 'Database System Concepts', grade: '10' } ]
 //   Grades on the Danish scale, because the query calls danish_grade.
-// console.log(await coursesFor('70557'));                   // []
-console.log(await studentsPerDepartment());
+console.log("--- --- --- --- --- --- --- --- --- ---\n")
+console.log(await coursesFor('70557'));                   // []
+// console.log(await studentsPerDepartment());
 //   [ { deptName: 'Biology', students: 1 }, { deptName: 'Comp. Sci.', students: 4 }, ... ]
 // console.log(typeof (await studentsPerDepartment())[0].students);   // number
 
@@ -49,6 +53,7 @@ console.log(await studentsPerDepartment());
 // console.log((await pool.query(
 //   "SELECT danish_grade('A') AS a, danish_grade('C-') AS c, danish_grade(NULL) AS n")).rows[0]);
 //   { a: '12', c: '02', n: null }
+console.log("\n--- --- --- TRANSCRIPT OF --- --- --- -\n")
 console.log(await transcriptOf('00128'));
 //   two rows: CS-101 with 12, CS-347 with 10
 // console.log(await transcriptOrUndefined('99999'));        // undefined
@@ -64,6 +69,7 @@ console.log(await transcriptOf('00128'));
 // console.log(await firstCourseTitle('00128'));             // Intro. to Computer Science
 // console.log(await firstCourseTitle('99999'));             // undefined
 // console.time('one after another');
+console.log("\n--- OVERVIEW SLOWLY ---\n")
 console.log(await overviewSlowly());
 // console.timeEnd('one after another');   // about 600 ms
 // console.time('together');
