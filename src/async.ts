@@ -59,8 +59,25 @@ export async function overviewSlowly(): Promise<Overview> {
 }
 
 export async function overview(): Promise<Overview> {
-  // TODO
-  throw new Error('not implemented');
+  const [students, courses, departments] = await Promise.all([
+    pool.query<{ total: number }>(
+    `SELECT pg_sleep(0.2), COUNT(*)::int AS total
+    FROM student`
+  ),
+  pool.query<{ total: number }>(
+    `SELECT pg_sleep(0.2), COUNT(*)::int AS total
+    FROM course`
+  ),
+  pool.query<{ total: number }>(
+    `SELECT pg_sleep(0.2), COUNT(*)::int AS total
+    FROM department`
+  )
+  ]);
+  return {
+    students: students.rows[0].total,
+    courses: courses.rows[0].total,
+    departments: departments.rows[0].total
+  };
 }
 
 // --- C3. The forgotten await ----------------------------------------------
