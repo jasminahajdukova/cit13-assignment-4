@@ -38,8 +38,13 @@ export async function transcriptOf(studentId: string): Promise<TranscriptRow[]> 
  */
 export async function transcriptOrUndefined(
   studentId: string): Promise<TranscriptRow[] | undefined> {
-  // TODO
-  throw new Error('not implemented');
+  try {
+    return await transcriptOf(studentId);
+  } catch (err) {
+    if (typeof err === 'object' && err !== null && 'code' in err && err.code === 'P0001') {
+      return undefined;
+    }
+  }
 }
 
 /**
