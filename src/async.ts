@@ -25,6 +25,10 @@ export async function firstCourseTitle(studentId: string): Promise<string | unde
   const courses = await coursesFor(student.id);
   return courses[0]?.title;
 }
+  // we used a check, not try/catch: findStudent already returns undefined when
+  // there is no such student, so a missing student is a normal, expected
+  // result and not an error. try/catch is kept for real failures (lost
+  // connection, bad SQL), which should still reach the caller.
 
 // --- C2. Steps that do not depend on each other ---------------------------
 
@@ -45,10 +49,10 @@ export async function firstCourseTitle(studentId: string): Promise<string | unde
  * the difference visible, and on a real server the waiting is real.
  */
 async function count(table: 'student' | 'course' | 'department'): Promise<number> {
-  const result = await pool.query<{ total: number }>(
+  const {rows} = await pool.query<{ total: number }>(
     `SELECT pg_sleep(0.2), count(*)::int AS total FROM ${table}`
   );
-  return result.rows[0].total;
+  return rows[0].total;
 }
 
 export async function overviewSlowly(): Promise<Overview> {
@@ -98,9 +102,18 @@ export async function removeAndCheckBroken(id: string): Promise<boolean> {
   return still !== undefined;
 }
 
+// Explanation: deleteStudent is not awaited. It starts the DELETE and returns
+// a pending promise; findStudent starts its SELECT straight away on
+// another connection, so the two run at the same time. The SELECT sees
+// the row before the DELETE has committed, and the function returns true.
+// If the delete fails, nobody awaits its promise: the error never reaches
+// the caller, and Node reports an unhandled rejection and stops the process.
+
+
 /** The same thing, correct: false when the student is really gone. */
 export async function removeAndCheck(id: string): Promise<boolean> {
   await deleteStudent(id);
   const still = await findStudent(id);
   return still !== undefined;
 }
+

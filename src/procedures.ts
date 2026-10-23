@@ -20,12 +20,12 @@ export interface TranscriptRow {
  * here as a rejected promise. Let it travel on: this one throws.
  */
 export async function transcriptOf(studentId: string): Promise<TranscriptRow[]> {
-  const result = await pool.query<TranscriptRow>(
+  const {rows} = await pool.query<TranscriptRow>(
     `SELECT course_id AS "courseId", title, grade
      FROM student_transcript($1)`,
     [studentId]
   );
-  return result.rows;
+  return rows;
 }
 
 /**
@@ -44,6 +44,7 @@ export async function transcriptOrUndefined(
     if (typeof err === 'object' && err !== null && 'code' in err && err.code === 'P0001') {
       return undefined;
     }
+    throw err;
   }
 }
 
@@ -61,7 +62,7 @@ export async function enrolWithProcedure(
   studentId: string, courseId: string, secId: string,
   semester: string, year: number): Promise<number> {
     const { rows } = await pool.query<{ new_total: string }>(
-      `CALL enrol_student($1, $2, $3, $4, $5)`,
+      `CALL enrol_student($1, $2, $3, $4, $5, NULL)`,
     [studentId, courseId, secId, semester, year]
   );
   // new_total is numeric, so pg delivers it as a string.

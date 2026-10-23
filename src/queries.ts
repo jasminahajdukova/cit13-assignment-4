@@ -38,20 +38,20 @@ export interface DeptCount {
 
 /** A page of students, ordered by id. */
 export async function listStudents(limit: number, offset: number): Promise<Student[]> {
-  const result = await pool.query<Student>(
+  const { rows } = await pool.query<Student>(
     `SELECT id, name, dept_name AS "deptName", tot_cred::int AS "totCred"
      FROM student
      ORDER BY id
      LIMIT $1 OFFSET $2`,
     [limit, offset]
   );
-  return result.rows;
+  return rows;
 }
 
 /** One student, or undefined when there is no such id. */
 export async function findStudent(id: string): Promise<Student | undefined> {
   const { rows } = await pool.query<Student>(
-    `SELECT id, name, dept_name AS "deptName", tot_cred AS "totCred"
+    `SELECT id, name, dept_name AS "deptName", tot_cred::int AS "totCred"
     FROM student
     WHERE id = $1`,
     [id]
@@ -65,7 +65,7 @@ export async function studentsIn(deptName: string): Promise<Student[]> {
     `SELECT id,
             name,
             dept_name AS "deptName",
-            tot_cred AS "totCred"
+            tot_cred::int AS "totCred"
     FROM student
     WHERE dept_name = $1
     ORDER BY name;`, 
@@ -87,7 +87,7 @@ export async function studentsIn(deptName: string): Promise<Student[]> {
  */
 export async function coursesFor(studentId: string): Promise<CourseRow[]> {
   const { rows } = await pool.query<CourseRow>(`
-    SELECT c.course_id as "courseID", c.title, danish_grade(t.grade) AS grade
+    SELECT c.course_id as "courseId", c.title, danish_grade(t.grade) AS grade
     FROM student s
     JOIN takes t ON t.id = s.id
     JOIN course c ON c.course_id = t.course_id
@@ -107,13 +107,13 @@ export async function coursesFor(studentId: string): Promise<CourseRow[]> {
  * look at the type of what you get.
  */
 export async function studentsPerDepartment(): Promise<DeptCount[]> {
-  const result = await pool.query<DeptCount>(
+  const { rows } = await pool.query<DeptCount>(
     `SELECT dept_name AS "deptName", count(*)::int AS students  
      FROM student
      GROUP BY dept_name
      ORDER BY dept_name`
   );
-  return result.rows;
+  return rows;
 }
 
 // --- A4. Writing ----------------------------------------------------------
@@ -136,9 +136,3 @@ export async function deleteStudent(id: string): Promise<boolean> {
   return (rowCount ?? 0) > 0;
 }
 
-// Explanation: deleteStudent is not awaited. It starts the DELETE and returns
-// a pending promise; findStudent starts its SELECT straight away on
-// another connection, so the two run at the same time. The SELECT sees
-// the row before the DELETE has committed, and the function returns true.
-// If the delete fails, nobody awaits its promise: the error never reaches
-// the caller, and Node reports an unhandled rejection and stops the process.
