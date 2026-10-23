@@ -25,7 +25,7 @@ console.log((await listStudents(5, 5)).map(s => s.id));   // 45678 54321 55739 7
 // console.log(await findStudent('00128'));
 //   { id: '00128', name: 'Zhang', deptName: 'Comp. Sci.', totCred: 102 }
 // console.log(await findStudent('99999'));                  // undefined
-// console.log((await studentsIn('Comp. Sci.')).map(s => s.name));
+console.log((await studentsIn('Comp. Sci.')).map(s => s.name));
 //   [ 'Brown', 'Shankar', 'Williams', 'Zhang' ]
 // console.log(await coursesFor('00128'));
 //   [ { courseId: 'CS-101', title: 'Intro. to Computer Science', grade: '12' },
