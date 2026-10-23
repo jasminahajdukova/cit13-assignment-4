@@ -1,0 +1,17 @@
+{
+  "name": "assignment-database",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node --env-file=.env dist/index.js"
+  },
+  "dependencies": {
+    "pg": "^8.13.0"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "@types/node": "^22.20.3",
+    "@types/pg": "^8.11.0"
+  }
+}
