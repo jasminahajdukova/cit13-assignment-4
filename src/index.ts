@@ -41,18 +41,21 @@ console.log(await coursesFor('70557'));                   // []
 // console.log(typeof (await studentsPerDepartment())[0].students);   // number
 
 // --- Part B1: the transaction ---
-// console.log(await insertStudent(
-//   { id: '90000', name: 'Testperson', deptName: 'Music', totCred: 0 }));
-//   { id: '90000', name: 'Testperson', deptName: 'Music', totCred: 0 }
-// console.log(await enrolInTypeScript(
-//   { studentId: '90000', courseId: 'MU-199', secId: '1', semester: 'Spring', year: 2018 }));
+console.log("\n--- --- --- INSERT STUDENT --- --- --- -\n")
+console.log(await insertStudent(
+  { id: '90000', name: 'Testperson', deptName: 'Music', totCred: 0 }));
+  // { id: '90000', name: 'Testperson', deptName: 'Music', totCred: 0 }
+console.log("\n--- --- --- ENROL IN TYPESCRIPT --- ---\n")
+console.log(await enrolInTypeScript(
+  { studentId: '90000', courseId: 'MU-199', secId: '1', semester: 'Spring', year: 2018 }));
 //   3   (the credits of MU-199)
 
 // --- Part B2 and B3: the routines in the database ---
 // First check that danish_grade, from the database exercises, is still there:
-// console.log((await pool.query(
-//   "SELECT danish_grade('A') AS a, danish_grade('C-') AS c, danish_grade(NULL) AS n")).rows[0]);
-//   { a: '12', c: '02', n: null }
+console.log("\n--- --- --- CHECK DANISH GRADE --- --- -\n")
+console.log((await pool.query(
+  "SELECT danish_grade('A') AS a, danish_grade('C-') AS c, danish_grade(NULL) AS n")).rows[0]);
+  // { a: '12', c: '02', n: null }
 console.log("\n--- --- --- TRANSCRIPT OF --- --- --- -\n")
 console.log(await transcriptOf('00128'));
 //   two rows: CS-101 with 12, CS-347 with 10
@@ -69,7 +72,7 @@ console.log(await transcriptOf('00128'));
 // console.log(await firstCourseTitle('00128'));             // Intro. to Computer Science
 // console.log(await firstCourseTitle('99999'));             // undefined
 // console.time('one after another');
-console.log("\n--- OVERVIEW SLOWLY ---\n")
+console.log("\n--- --- --- OVERVIEW SLOWLY --- --- --- -\n")
 console.log(await overviewSlowly());
 // console.timeEnd('one after another');   // about 600 ms
 // console.time('together');
