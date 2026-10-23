@@ -117,3 +117,10 @@ export async function deleteStudent(id: string): Promise<boolean> {
   [id]);
   return (rowCount ?? 0) > 0;
 }
+
+// Explanation: deleteStudent is not awaited. It starts the DELETE and returns
+// a pending promise; findStudent starts its SELECT straight away on
+// another connection, so the two run at the same time. The SELECT sees
+// the row before the DELETE has committed, and the function returns true.
+// If the delete fails, nobody awaits its promise: the error never reaches
+// the caller, and Node reports an unhandled rejection and stops the process.
