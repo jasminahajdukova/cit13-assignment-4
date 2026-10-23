@@ -50,8 +50,13 @@ export async function listStudents(limit: number, offset: number): Promise<Stude
 
 /** One student, or undefined when there is no such id. */
 export async function findStudent(id: string): Promise<Student | undefined> {
-  // TODO
-  throw new Error('not implemented');
+  const { rows } = await pool.query<Student>(
+    `SELECT id, name, dept_name AS "deptName", tot_cred AS "totCred"
+    FROM student
+    WHERE id = $1`,
+    [id]
+  );
+  return rows[0];
 }
 
 /** The students of one department, ordered by name. */
