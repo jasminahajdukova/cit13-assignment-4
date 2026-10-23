@@ -38,8 +38,14 @@ export interface DeptCount {
 
 /** A page of students, ordered by id. */
 export async function listStudents(limit: number, offset: number): Promise<Student[]> {
-  // TODO
-  throw new Error('not implemented');
+  const result = await pool.query<Student>(
+    `SELECT id, name, dept_name AS "deptName", tot_cred::int AS "totCred"
+     FROM student
+     ORDER BY id
+     LIMIT $1 OFFSET $2`,
+    [limit, offset]
+  );
+  return result.rows;
 }
 
 /** One student, or undefined when there is no such id. */
@@ -79,8 +85,13 @@ export async function coursesFor(studentId: string): Promise<CourseRow[]> {
  * look at the type of what you get.
  */
 export async function studentsPerDepartment(): Promise<DeptCount[]> {
-  // TODO
-  throw new Error('not implemented');
+  const result = await pool.query<DeptCount>(
+    `SELECT dept_name AS "deptName", count(*)::int AS students  
+     FROM student
+     GROUP BY dept_name
+     ORDER BY dept_name`
+  );
+  return result.rows;
 }
 
 // --- A4. Writing ----------------------------------------------------------
